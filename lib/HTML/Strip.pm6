@@ -1,5 +1,7 @@
 use v6;
 
+module HTML::Strip;
+
 grammar HTML::Strip::Grammar {
 
     token TOP {
@@ -98,12 +100,12 @@ class HTML::Strip::Actions {
 
 }
 
-constant @DEFAULT_STRIP_TAGS = <title script style applet>;
+constant @DEF_STRIP_TAGS = <title script style applet>;
 
 sub strip_html(Str $html, 
         :$emit_space = True, 
         :$decode_entities = True,
-        :@strip_tags = @DEFAULT_STRIP_TAGS) is export {
+        :@strip_tags = @DEF_STRIP_TAGS) is export {
 
     my $a = HTML::Strip::Actions.new(
         :emit_space($emit_space),
@@ -113,3 +115,56 @@ sub strip_html(Str $html,
     return $a.out();
 }
 
+
+
+=begin pod
+
+=head1 NAME
+
+HTML::Strip - Strip HTML markup from text.
+
+=head1 SYNOPSIS
+
+        use HTML::Strip;
+        my $html = q{<body>my <a href="http://">perl module</a></body>};
+        my $clean = html_strip($html);
+        # $clean: my perl module 
+
+=head1 DESCRIPTION
+
+HTML::Strip removes HTML tags and comments from given text.
+
+This module is inspired by the Perl5 module HTML::Strip and provides
+the same functionality. However, both it's interface and implementation 
+differs. This module is implemented using Perl6 grammars rather than XS.
+
+Note that this module does no XML/HTML validation. Grabage in might 
+give you garbage out.
+
+=head2 C<html_strip(Str)>
+
+Removes HTML tags and comments from given text. 
+
+
+If HTML::Entities is available, this module will also decode HTML encoded text.
+For example &lt; will become <
+
+=head3 C<:emit_space>
+
+By default all tags are replaced by space. Set this optional parameter to 
+False if you want them to be replaced by nothing.
+
+=head3 C<:decode_entities>
+
+By default HTML entities will be decoded if the module HTML::Entities is 
+available. For example &lt; becomes <
+
+Set this to false if you do not want this.
+
+=head2 C<License>
+This module is licensed under the same license as Perl6 itself. 
+Artistic License 2.0.
+
+Copyright 2013 Dagur Valberg Johannsson.
+
+=end pod

@@ -1,0 +1,7 @@
+{
+    "name"        : "HTML::Strip"
+    "version"     : "*",
+    "description" : "Strip HTML markup from text",
+    "depends"     : [],
+    "source-url"  : "git://github.com/dagurval/perl6-html-strip.git",
+}
