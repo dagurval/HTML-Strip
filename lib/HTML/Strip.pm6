@@ -39,43 +39,43 @@ grammar HTML::Strip::Grammar {
 class HTML::Strip::Actions {
 
     has Str $.out = "";
-
-    has Bool $.emit_space = True;
+    has Bool $.emit_space is rw;
+    has @.strip_tags is rw;
 
     has Bool $!inside_comment = False;
-    has Bool $!inside_tag = False;
-    
     has Bool $!ignore_contents = False;
 
     has Str $!curr_tag = "";
+    has Bool $!inside_tag = False;
+    has Bool $!is_closing_tag = False;
 
 
-    has @.ignore_tags = qw{title script style applet};
 
     method tag_start($/) { 
         $!inside_tag = True; 
         $!curr_tag = q{};
+        $!is_closing_tag = False;
     }
 
     method tag_end($/) { 
         $!inside_tag = False; 
 
-        $!ignore_contents = @!ignore_tags ~~ $!curr_tag;
+        $!ignore_contents = ($!curr_tag eq any @!strip_tags).Bool;
+        $!ignore_contents = False if $!is_closing_tag;
 
         return if not $!out;
         $!out = $!out ~ q{ }
             if $!emit_space and $!out.comb[*-1] ne " ";
     }
+
     method tag_quickend($/) {
         $!inside_tag = False;
     }
     method comment_start($/) { 
-        #print "<comment start>";
         $!inside_comment = True; 
     }
 
     method comment_end($/) { 
-        #print "<comment end>";
         $!inside_comment = False; 
     }
 
@@ -92,21 +92,23 @@ class HTML::Strip::Actions {
     }
     
     method closing_tag_start($/) {
-        $!ignore_contents = False;
-        $!inside_tag = True;
+        self.tag_start($/);
+        $!is_closing_tag = True;
     }
 
 }
 
-constant @DEFAULT_STRIP_TAGS = qw{title script style applet};
+constant @DEFAULT_STRIP_TAGS = <title script style applet>;
 
-sub strip_html(Str $html, :$emit_space, :@ignore_tags) is export {
-    my $a = HTML::Strip::Actions.new;
+sub strip_html(Str $html, 
+        :$emit_space = True, 
+        :@strip_tags = @DEFAULT_STRIP_TAGS) is export {
+
+    my $a = HTML::Strip::Actions.new(
+        :emit_space($emit_space),
+        :strip_tags(@strip_tags));
+
     HTML::Strip::Grammar.parse($html, :actions($a));
     return $a.out();
 }
 
-my $text = q{<html><script>ignoreme</script><body>superstuff</body><!-- some comment <a href="and a 
-    link inside comment"></a>--> <a href="http://example.com">example</a>yup</html>};
-
-say strip_html($text);
