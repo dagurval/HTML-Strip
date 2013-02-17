@@ -102,6 +102,7 @@ constant @DEFAULT_STRIP_TAGS = <title script style applet>;
 
 sub strip_html(Str $html, 
         :$emit_space = True, 
+        :$decode_entities = True,
         :@strip_tags = @DEFAULT_STRIP_TAGS) is export {
 
     my $a = HTML::Strip::Actions.new(
