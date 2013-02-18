@@ -174,9 +174,7 @@ give you garbage out.
 
 Removes HTML tags and comments from given text. 
 
-
-If HTML::Entities is available, this module will also decode HTML encoded text.
-For example &lt; will become <
+This module will also decode HTML encoded text. For example &lt; will become <
 
 =head3 C<:emit_space>
 
@@ -185,8 +183,7 @@ False if you want them to be replaced by nothing.
 
 =head3 C<:decode_entities>
 
-By default HTML entities will be decoded if the module HTML::Entities is 
-available. For example &lt; becomes <
+By default HTML entities will be decoded. For example &lt; becomes <
 
 Set this to false if you do not want this.
 
