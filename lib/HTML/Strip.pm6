@@ -8,7 +8,7 @@ grammar HTML::Strip::Grammar {
         (<comment_start> | <comment_end> 
          | <closing_tag_start> | <tag_start> 
          | <tag_quickend> | <tag_end>  
-         | <contents>)+
+         | <encoded_char> | <contents>)+
     }
 
     token tag_start {
@@ -35,6 +35,10 @@ grammar HTML::Strip::Grammar {
         '--' \s* '>'
     }
 
+    token encoded_char {
+        '&' \w+ ';'
+    }
+
     token contents { . }
 }
 
@@ -43,6 +47,7 @@ class HTML::Strip::Actions {
     has Str $.out = "";
     has Bool $.emit_space is rw;
     has @.strip_tags is rw;
+    has Bool $.decode_entities is rw;
 
     has Bool $!inside_comment = False;
     has Bool $!ignore_contents = False;
@@ -52,6 +57,14 @@ class HTML::Strip::Actions {
     has Bool $!is_closing_tag = False;
 
 
+    method emit_space() {
+        if not $!out {
+#$!out = q{ };
+            return;
+        }
+        $!out = $!out ~ q{ }
+            if $!emit_space and $!out.comb[*-1] ne " ";
+    }
 
     method tag_start($/) { 
         $!inside_tag = True; 
@@ -62,17 +75,18 @@ class HTML::Strip::Actions {
     method tag_end($/) { 
         $!inside_tag = False; 
 
-        $!ignore_contents = ($!curr_tag eq any @!strip_tags).Bool;
+        my $strip_tag = ($!curr_tag eq any @!strip_tags).Bool;
+        $!ignore_contents = $strip_tag;
         $!ignore_contents = False if $!is_closing_tag;
 
-        return if not $!out;
-        $!out = $!out ~ q{ }
-            if $!emit_space and $!out.comb[*-1] ne " ";
+        self.emit_space()
+            if not $strip_tag;
     }
 
     method tag_quickend($/) {
         $!inside_tag = False;
     }
+
     method comment_start($/) { 
         $!inside_comment = True; 
     }
@@ -98,6 +112,15 @@ class HTML::Strip::Actions {
         $!is_closing_tag = True;
     }
 
+    method encoded_char($/) {
+        if $!decode_entities {
+            say "TODO: Decode $/";
+        }
+        else {
+            $!out = $!out ~ $/;
+        }
+    }
+
 }
 
 constant @DEF_STRIP_TAGS = <title script style applet>;
@@ -109,10 +132,15 @@ sub strip_html(Str $html,
 
     my $a = HTML::Strip::Actions.new(
         :emit_space($emit_space),
-        :strip_tags(@strip_tags));
+        :strip_tags(@strip_tags),
+        :decode_entities($decode_entities));
 
     HTML::Strip::Grammar.parse($html, :actions($a));
-    return $a.out();
+    my $out = $a.out();
+    return $out if not $out;
+    
+#return $out.chop if $out.comb[*-1] eq " ";
+    return $out;
 }
 
 
