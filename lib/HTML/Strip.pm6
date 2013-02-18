@@ -171,17 +171,17 @@ HTML::Strip - Strip HTML markup from text.
 HTML::Strip removes HTML tags and comments from given text.
 
 This module is inspired by the Perl5 module HTML::Strip and provides
-the same functionality. However, both it's interface and implementation 
+the same functionality. However, both its interface and implementation 
 differs. This module is implemented using Perl6 grammars rather than XS.
 
-Note that this module does no XML/HTML validation. Grabage in might 
+Note that this module does no XML/HTML validation. Garbage in might 
 give you garbage out.
 
 =head2 C<html_strip(Str)>
 
 Removes HTML tags and comments from given text. 
 
-This module will also decode HTML encoded text. For example &lt; will become <
+This module will also decode HTML encoded text. For example &lt; will become < .
 
 =head3 C<:emit_space>
 
