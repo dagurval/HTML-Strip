@@ -1,6 +1,7 @@
 use v6;
 
 module HTML::Strip;
+use HTML::Strip::Decode;
 
 grammar HTML::Strip::Grammar {
 
@@ -36,7 +37,7 @@ grammar HTML::Strip::Grammar {
     }
 
     token encoded_char {
-        '&' \w+ ';'
+        '&' '#'? \w+ ';'
     }
 
     token contents { . }
@@ -114,7 +115,7 @@ class HTML::Strip::Actions {
 
     method encoded_char($/) {
         if $!decode_entities {
-            say "TODO: Decode $/";
+            $!out = $!out ~ decode($/.Str);
         }
         else {
             $!out = $!out ~ $/;
