@@ -43,15 +43,6 @@ grammar HTML::Strip::Grammar {
     token contents { . }
 }
 
-#class StripTagState {
-#
-#    has $!tag;
-#
-#    submethod BUILD($tag) {
-#        $!tag = $tag;
-#    }
-#}
-
 class HTML::Strip::Actions {
 
     has Str $.out = "";
@@ -72,7 +63,7 @@ class HTML::Strip::Actions {
     method emit_space() {
         return if not $!out;
         
-        $!out = $!out ~ q{ }
+        $!out ~= q{ }
             if $!emit_space and $!out.comb[*-1] ne " ";
     }
 
@@ -121,11 +112,11 @@ class HTML::Strip::Actions {
         return if $!inside_comment;
 
         if $!inside_tag {
-            $!curr_tag = $!curr_tag ~ $/;
+            $!curr_tag ~= $/;
             return;
         }
         return if $!ignore_contents;
-        $!out = $!out ~ $/ 
+        $!out ~= $/ 
     }
     
     method closing_tag_start($/) {
@@ -135,10 +126,10 @@ class HTML::Strip::Actions {
 
     method encoded_char($/) {
         if $!decode_entities {
-            $!out = $!out ~ decode($/.Str);
+            $!out ~= decode($/.Str);
         }
         else {
-            $!out = $!out ~ $/;
+            $!out ~= $/;
         }
     }
 
