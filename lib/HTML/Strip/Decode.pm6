@@ -270,17 +270,18 @@ my %entity2char = (
 );
 
 
-sub decode(Str $char is copy) is export {
-    $char = $char.subst(/^\&/, q{});
-    $char = $char.subst(/\;$/, q{});
+sub decode(Str $char) is export {
+    
+    my $c = $char.subst(/^\&/, q{});
+    $c = $c.subst(/\;$/, q{});
 
-    return $char if not $char;
+    return $char if not $c;
 
-    if my $c = $char.match(/^'#' (\d+) $/) {
-        return chr($c[0].Int);
+    if my $m = $c.match(/^'#' (\d+) $/) {
+        return chr($m[0].Int);
     }
 
-    my $decoded = %entity2char{$char};
+    my $decoded = %entity2char{$c};
     return $decoded // $char;
 }
 

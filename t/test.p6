@@ -1,5 +1,5 @@
 #!/usr/bin/env perl6
-
+use v6;
 BEGIN { @*INC.unshift: '../lib'; }
 
 use HTML::Strip;
@@ -33,6 +33,7 @@ is strip_html('<script>foo</script>bar' ), 'bar' ;
 
 is strip_html( '&#060;foo&#062;' ), '<foo>' ;
 is strip_html( '&lt;foo&gt;' ), '<foo>' ;
+is strip_html('&invalid;&encoded;&string;'), '&invalid;&encoded;&string;', "Invalid encoding";
 
 is strip_html('&#060;foo&#062;', :decode_entities(False)), '&#060;foo&#062;' ;
 is strip_html('&lt;foo&gt;', :decode_entities(False)), '&lt;foo&gt;' ;
@@ -48,3 +49,4 @@ is strip_html( '<script>foo</script>bar' ), 'bar' ;
 is  strip_html('<baz>fumble</baz>bar<quux>foo</quux>', :strip_tags(@s)), 'bar' ;
 is  strip_html('<baz>fumble<quux/>foo</baz>bar', :strip_tags(@s)), 'bar' ;
 is  strip_html('<foo> </foo> <bar> baz </bar>' , :strip_tags(@s)), '   baz ' ;
+
