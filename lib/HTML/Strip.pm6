@@ -43,6 +43,15 @@ grammar HTML::Strip::Grammar {
     token contents { . }
 }
 
+#class StripTagState {
+#
+#    has $!tag;
+#
+#    submethod BUILD($tag) {
+#        $!tag = $tag;
+#    }
+#}
+
 class HTML::Strip::Actions {
 
     has Str $.out = "";
@@ -57,12 +66,12 @@ class HTML::Strip::Actions {
     has Bool $!inside_tag = False;
     has Bool $!is_closing_tag = False;
 
+    has Str $!ignore_tag = "";
+
 
     method emit_space() {
-        if not $!out {
-#$!out = q{ };
-            return;
-        }
+        return if not $!out;
+        
         $!out = $!out ~ q{ }
             if $!emit_space and $!out.comb[*-1] ne " ";
     }
@@ -74,11 +83,22 @@ class HTML::Strip::Actions {
     }
 
     method tag_end($/) { 
+        $!curr_tag = $!curr_tag.subst(/\s+ .* $/, '');
+        $!curr_tag = $!curr_tag.subst(/^\s+/, '');
         $!inside_tag = False; 
+        
+        if ($!ignore_contents and $!curr_tag ne $!ignore_tag) {
+            return; 
+        }
+            
 
         my $strip_tag = ($!curr_tag eq any @!strip_tags).Bool;
         $!ignore_contents = $strip_tag;
+
         $!ignore_contents = False if $!is_closing_tag;
+
+        $!ignore_tag = $!curr_tag if $!ignore_contents;
+        
 
         self.emit_space()
             if not $strip_tag;

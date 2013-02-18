@@ -14,6 +14,9 @@ is strip_html($html), "text ", "ignore comment";
 $html = q{<html><style>ignore me</style>keep me};
 is strip_html($html), "keep me", "basic tag strip";
 
+is strip_html('&invalid;&encoded;&string;'), '&invalid;&encoded;&string;', "Invalid encoding";
+
+is strip_html('<script type="javascript">ignore me</script>hello world</a>'), 'hello world ', 'javascript tag';
 
 # Below are tests originally ported from the Perl5 module HTML::Strip
 # http://search.cpan.org/~kilinrax/HTML-Strip-1.06/Strip.pm
@@ -33,7 +36,6 @@ is strip_html('<script>foo</script>bar' ), 'bar' ;
 
 is strip_html( '&#060;foo&#062;' ), '<foo>' ;
 is strip_html( '&lt;foo&gt;' ), '<foo>' ;
-is strip_html('&invalid;&encoded;&string;'), '&invalid;&encoded;&string;', "Invalid encoding";
 
 is strip_html('&#060;foo&#062;', :decode_entities(False)), '&#060;foo&#062;' ;
 is strip_html('&lt;foo&gt;', :decode_entities(False)), '&lt;foo&gt;' ;
