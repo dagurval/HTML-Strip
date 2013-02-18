@@ -148,11 +148,7 @@ sub strip_html(Str $html,
         :decode_entities($decode_entities));
 
     HTML::Strip::Grammar.parse($html, :actions($a));
-    my $out = $a.out();
-    return $out if not $out;
-    
-#return $out.chop if $out.comb[*-1] eq " ";
-    return $out;
+    return $a.out();
 }
 
 
