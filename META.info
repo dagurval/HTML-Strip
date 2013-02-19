@@ -1,5 +1,5 @@
 {
-    "name"        : "HTML::Strip"
+    "name"        : "HTML::Strip",
     "version"     : "0.1.0",
     "description" : "Strip HTML markup from text",
     "author"      : "Dagur Valberg Johannsson",
