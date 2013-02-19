@@ -60,7 +60,7 @@ class HTML::Strip::Actions {
     has Str $!ignore_tag = "";
 
 
-    method emit_space() {
+    method do_emit_space() {
         return if not $!out;
         
         $!out ~= q{ }
@@ -91,7 +91,7 @@ class HTML::Strip::Actions {
         $!ignore_tag = $!curr_tag if $!ignore_contents;
         
 
-        self.emit_space()
+        self.do_emit_space()
             if not $strip_tag;
     }
 
