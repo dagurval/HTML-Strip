@@ -76,6 +76,7 @@ class HTML::Strip::Actions {
     method tag_end($/) { 
         $!curr_tag = $!curr_tag.subst(/\s+ .* $/, '');
         $!curr_tag = $!curr_tag.subst(/^\s+/, '');
+        $!curr_tag = $!curr_tag.lc;
         $!inside_tag = False; 
         
         if ($!ignore_contents and $!curr_tag ne $!ignore_tag) {

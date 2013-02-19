@@ -18,6 +18,8 @@ is strip_html('&invalid;&encoded;&string;'), '&invalid;&encoded;&string;', "Inva
 
 is strip_html('<script type="javascript">ignore me</script>hello world</a>'), 'hello world ', 'javascript tag';
 
+is strip_html('<SCRIPT>hello</script>world'), 'world', 'upper case';
+
 # Below are tests originally ported from the Perl5 module HTML::Strip
 # http://search.cpan.org/~kilinrax/HTML-Strip-1.06/Strip.pm
 
