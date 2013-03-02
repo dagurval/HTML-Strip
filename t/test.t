@@ -4,6 +4,7 @@ BEGIN { @*INC.unshift: '../lib'; }
 
 use HTML::Strip;
 use Test;
+plan 27;
 
 my $html = q{<html>simple test</html>};
 is strip_html($html), "simple test ", "simple strip";
