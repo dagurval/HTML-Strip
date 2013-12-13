@@ -4,5 +4,8 @@
     "description" : "Strip HTML markup from text",
     "author"      : "Dagur Valberg Johannsson",
     "depends"     : [],
-    "source-url"  : "git://github.com/dagurval/HTML-Strip.git"
+    "source-url"  : "git://github.com/dagurval/HTML-Strip.git",
+    "provides": {
+        "HTML::Strip": "lib/HTML/Strip.pm6"
+    }
 }
