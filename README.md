@@ -1,4 +1,4 @@
-HTTP::Strip
+HTML::Strip
 ================
 
 Strip HTML markup from text.
